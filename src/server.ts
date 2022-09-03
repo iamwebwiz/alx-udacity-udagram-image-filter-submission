@@ -36,7 +36,7 @@ import { filterImageFromURL, deleteLocalFiles, isValidUrl } from "./util/util";
     }
 
     if (!!image_url && !isValidUrl(image_url)) {
-      res.send("please use a valid url");
+      res.status(422).send("please use a valid url");
     }
 
     const imagePath = await filterImageFromURL(image_url);
