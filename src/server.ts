@@ -7,7 +7,7 @@ import { filterImageFromURL, deleteLocalFiles, isValidUrl } from "./util/util";
   const app = express();
 
   // Set the network port
-  const port = process.env.PORT || 8082;
+  const port: string | number = process.env.PORT || 8082;
 
   // Use the body parser middleware for post requests
   app.use(bodyParser.json());
@@ -57,10 +57,7 @@ import { filterImageFromURL, deleteLocalFiles, isValidUrl } from "./util/util";
     }
 
     res.sendFile(imagePath, (err) => {
-      if (err)
-        console.error(
-          `Unable to show filtered image due to this error: ${err}`
-        );
+      if (err) console.error(`Unable to show filtered image due to this error: ${err}`);
       deleteLocalFiles([imagePath]);
     });
   });
@@ -70,9 +67,7 @@ import { filterImageFromURL, deleteLocalFiles, isValidUrl } from "./util/util";
   // Root Endpoint
   // Displays a simple message to the user
   app.get("/", async (req, res) => {
-    res.send(
-      "Nothing much happens here. Try sending a GET request to <kbd>/filteredimage?image_url={{}}</kbd>"
-    );
+    res.send("Nothing much happens here. Try sending a GET request to <kbd>/filteredimage?image_url={{}}</kbd>");
   });
 
   // Start the Server
