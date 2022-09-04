@@ -32,7 +32,11 @@ import { filterImageFromURL, deleteLocalFiles, isValidUrl } from "./util/util";
     const { image_url } = req.query;
 
     if (!image_url) {
-      res.send("the query param [image_url] must be supplied");
+      res
+        .status(422)
+        .send(
+          "The query parameter [image_url] must be supplied. Append <kbd>?image_url={{url_of_image}}</kbd> to the URL."
+        );
     }
 
     if (!!image_url && !isValidUrl(image_url)) {
