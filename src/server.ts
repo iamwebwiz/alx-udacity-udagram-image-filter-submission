@@ -33,7 +33,7 @@ import { filterImageFromURL, deleteLocalFiles, isValidUrl } from "./util/util";
 
     if (!image_url) {
       res
-        .status(422)
+        .status(404)
         .send(
           "The query parameter [image_url] must be supplied. Append <kbd>?image_url={{url_of_image}}</kbd> to the URL."
         );
@@ -43,11 +43,25 @@ import { filterImageFromURL, deleteLocalFiles, isValidUrl } from "./util/util";
       res.status(422).send("please use a valid url");
     }
 
-    const imagePath = await filterImageFromURL(image_url);
+    let imagePath: string;
 
-    res.sendFile(imagePath, {}, (err) => {
-      if (err) next(err);
-      else deleteLocalFiles([imagePath]);
+    try {
+      imagePath = await filterImageFromURL(image_url);
+    } catch (err) {
+      console.error(`Image is unable to load due to this error: ${err}`);
+      return res
+        .status(500)
+        .send(
+          "The image resource you are trying to load is not accessible. Please check the URL again or try another one."
+        );
+    }
+
+    res.sendFile(imagePath, (err) => {
+      if (err)
+        console.error(
+          `Unable to show filtered image due to this error: ${err}`
+        );
+      deleteLocalFiles([imagePath]);
     });
   });
 
@@ -56,7 +70,9 @@ import { filterImageFromURL, deleteLocalFiles, isValidUrl } from "./util/util";
   // Root Endpoint
   // Displays a simple message to the user
   app.get("/", async (req, res) => {
-    res.send("try GET /filteredimage?image_url={{}}");
+    res.send(
+      "Nothing much happens here. Try sending a GET request to <kbd>/filteredimage?image_url={{}}</kbd>"
+    );
   });
 
   // Start the Server
