@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import bodyParser from "body-parser";
 import { filterImageFromURL, deleteLocalFiles, isValidUrl } from "./util/util";
 
@@ -28,10 +28,10 @@ import { filterImageFromURL, deleteLocalFiles, isValidUrl } from "./util/util";
 
   /**************************************************************************** */
 
-  app.get("/filteredimage", async (req, res, next) => {
-    const { image_url } = req.query;
+  app.get("/filteredimage", async (req: Request, res: Response) => {
+    const imageUrl: string = req.query.image_url;
 
-    if (!image_url) {
+    if (!imageUrl) {
       res
         .status(404)
         .send(
@@ -39,14 +39,14 @@ import { filterImageFromURL, deleteLocalFiles, isValidUrl } from "./util/util";
         );
     }
 
-    if (!!image_url && !isValidUrl(image_url)) {
+    if (!!imageUrl && !isValidUrl(imageUrl)) {
       res.status(422).send("please use a valid url");
     }
 
     let imagePath: string;
 
     try {
-      imagePath = await filterImageFromURL(image_url);
+      imagePath = await filterImageFromURL(imageUrl);
     } catch (err) {
       console.error(`Image is unable to load due to this error: ${err}`);
       return res
@@ -66,7 +66,7 @@ import { filterImageFromURL, deleteLocalFiles, isValidUrl } from "./util/util";
 
   // Root Endpoint
   // Displays a simple message to the user
-  app.get("/", async (req, res) => {
+  app.get("/", async (req: Request, res: Response) => {
     res.send("Nothing much happens here. Try sending a GET request to <kbd>/filteredimage?image_url={{}}</kbd>");
   });
 
